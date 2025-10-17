@@ -35,7 +35,7 @@ let updateTodoList = function () {
     //     }
     // }
 
-    for (let todo in todolist) {
+    for (let todo in todoList) {
         if (
             (filterInput.value = "") ||
             (todoList[todo].title.includes(filterInput.value)) ||
@@ -80,7 +80,7 @@ let initList = function () {
     };
 
     req.open("GET", "https://api.jsonbin.io/v3/b/68f2259eae596e708f189282/latest", true);
-    req.setRequestHeader("X-Master-Key", "");
+    req.setRequestHeader("X-Master-Key", "$2a$10$4xaVj4PxinPsm9PbrumVu.M2oNh3Mv9gtJoeHJ1e6uSbJk/Q5/RNm");
     req.send();
 
     // let savedList = window.localStorage.getItem("todos");
@@ -156,6 +156,6 @@ let updateJSONBin = () => {
 
     req.open("PUT", "https://api.jsonbin.io/v3/b/68f2259eae596e708f189282", true);
     req.setRequestHeader("Content-Type", "application/json");
-    req.setRequestHeader("X-Master-Key", "");
+    req.setRequestHeader("X-Master-Key", "$2a$10$4xaVj4PxinPsm9PbrumVu.M2oNh3Mv9gtJoeHJ1e6uSbJk/Q5/RNm");
     req.send(JSON.stringify(todoList));
 }
