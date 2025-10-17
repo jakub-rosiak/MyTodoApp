@@ -2,13 +2,15 @@
 let todoList = [];
 
 let filterInput = document.getElementById("inputSearch");
-filterInput.addEventListener("input", () => {updateTodoList()})
+filterInput.addEventListener("input", () => { updateTodoList() })
 
 let updateTodoList = function () {
     let todoListDiv =
         document.getElementById("table");
 
-    while (todoListDiv.firstChild) {
+
+    while (todoListDiv.children.length > 1) {
+        console.log(todoListDiv.children.length);
         todoListDiv.removeChild(todoListDiv.lastChild);
     }
 
@@ -96,7 +98,10 @@ let addTodo = function () {
     //add item to the list
     todoList.push(newTodo);
 
-    window.localStorage.setItem("todos", JSON.stringify(todoList));
+    // inputTitle.value = "";
+    // inputDescription.value = "";
+    // inputPlace.value = "";
+    // inputDate.value = "";
     updateTodoList();
     updateJSONBin();
 }
