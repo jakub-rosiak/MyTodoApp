@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="theme.css">
+
+  <title>MyTODO App</title>
+</head>
+
+<body>
+  <h1>MyNotes</h1>
+  <div>
+    <label>Search</label>
+    <input type="text" id="inputSearch" placeholder="Type Your seach here..." />
+  </div>
+
+  <div id="todoListView">
+    <table id="table">
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Place</th>
+        <th>Due date</th>
+        <th>Delete</th>
+      </tr>
+
+    </table>
+  </div>
+
+  <form>
+    <label>Title</label>
+    <input type="text" id="inputTitle" />
+    <label>Description</label>
+    <input type="text" id="inputDescription" />
+    <label>Place</label>
+    <input type="text" id="inputPlace" />
+    <label>Due date</label>
+    <input type="date" id="inputDate" />
+    <input type="button" value="add" onclick="addTodo()" />
+  </form>
+  <script src="src/script.js"></script>
+</body>
+
+</html>
