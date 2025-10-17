@@ -1,45 +1,23 @@
 "use strict"
-let todoList = []; //declares a new array for Your todo list
+let todoList = [];
+
+let filterInput = document.getElementById("inputSearch");
+filterInput.addEventListener("input", () => {updateTodoList()})
 
 let updateTodoList = function () {
     let todoListDiv =
         document.getElementById("table");
 
-    //remove all elements
     while (todoListDiv.firstChild) {
-        todoListDiv.removeChild(todoListDiv.firstChild);
+        todoListDiv.removeChild(todoListDiv.lastChild);
     }
-
-    //add all elements
-    let filterInput = document.getElementById("inputSearch");
-    // for (let todo in todoList) {
-    //     if (
-    //         (filterInput.value == "") ||
-    //         (todoList[todo].title.includes(filterInput.value)) ||
-    //         (todoList[todo].description.includes(filterInput.value))
-    //     ) {
-    //         let newElement = document.createElement("p");
-    //         let newContent = document.createTextNode(todoList[todo].title + " " +
-    //             todoList[todo].description);
-    //         newElement.appendChild(newContent);
-    //         todoListDiv.appendChild(newElement);
-    //         let newDeleteButton = document.createElement("input");
-    //         newDeleteButton.type = "button";
-    //         newDeleteButton.value = "x";
-    //         newDeleteButton.addEventListener("click",
-    //             function () {
-    //                 deleteTodo(todo);
-    //             });
-
-    //         newElement.appendChild(newDeleteButton);
-    //     }
-    // }
 
     for (let todo in todoList) {
         if (
-            (filterInput.value = "") ||
+            (!filterInput || filterInput.value === "") ||
             (todoList[todo].title.includes(filterInput.value)) ||
-            (todoList[todo].description.includes(filterInput.value))
+            (todoList[todo].description.includes(filterInput.value)) ||
+            (todoList[todo].place.includes(filterInput.value))
         ) {
             let newElement = document.createElement("tr");
             let title = document.createElement("td");
@@ -49,11 +27,12 @@ let updateTodoList = function () {
             let place = document.createElement("td");
             place.innerText = todoList[todo].place;
             let dueDate = document.createElement("td");
-            dueDate.innerText = todoList[todo].dueDate;
+            dueDate.innerText = dayjs(todoList[todo].dueDate).format('DD.MM.YYYY');
             let deleteBtn = document.createElement("td");
             let newDeleteButton = document.createElement("input");
             newDeleteButton.type = "button";
-            newDeleteButton.value = "x";
+            newDeleteButton.value = "❌";
+            newDeleteButton.className = "btn btn-danger";
             newDeleteButton.addEventListener("click",
                 function () {
                     deleteTodo(todo);
@@ -64,7 +43,10 @@ let updateTodoList = function () {
             newElement.appendChild(place);
             newElement.appendChild(dueDate);
             newElement.appendChild(deleteBtn);
+
+            todoListDiv.appendChild(newElement);
         }
+
     }
 }
 
@@ -82,35 +64,9 @@ let initList = function () {
     req.open("GET", "https://api.jsonbin.io/v3/b/68f2259eae596e708f189282/latest", true);
     req.setRequestHeader("X-Master-Key", "");
     req.send();
-
-    // let savedList = window.localStorage.getItem("todos");
-    // if (savedList != null)
-    //     todoList = JSON.parse(savedList);
-    // else
-    //     todoList.push(
-    //         {
-    //             title: "Learn JS",
-    //             description: "Create a demo application for my TODO's",
-    //             place: "445",
-    //             category: '',
-    //             dueDate: new Date(2024, 10, 16)
-    //         },
-    //         {
-    //             title: "Lecture test",
-    //             description: "Quick test from the first three lectures",
-    //             place: "F6",
-    //             category: '',
-    //             dueDate: new Date(2024, 10, 17)
-    //         }
-    //         // of course the lecture test mentioned above will not take place
-    //     );
 }
 
 initList();
-
-
-
-//setInterval(updateTodoList, 1000);
 
 let deleteTodo = function (index) {
     todoList.splice(index, 1);
