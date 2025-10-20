@@ -10,7 +10,6 @@ let updateTodoList = function () {
 
 
     while (todoListDiv.children.length > 1) {
-        console.log(todoListDiv.children.length);
         todoListDiv.removeChild(todoListDiv.lastChild);
     }
 
@@ -54,6 +53,10 @@ let updateTodoList = function () {
 
 let initList = function () {
 
+    if(!('MASTER_KEY' in localStorage) && !('BIN_ID' in localStorage)) {
+        $("#settingsModal").modal("toggle");
+    }
+
     let req = new XMLHttpRequest();
 
     req.onreadystatechange = () => {
@@ -63,8 +66,8 @@ let initList = function () {
         updateTodoList();
     };
 
-    req.open("GET", "https://api.jsonbin.io/v3/b/68f2259eae596e708f189282/latest", true);
-    req.setRequestHeader("X-Master-Key", "");
+    req.open("GET", `https://api.jsonbin.io/v3/b/${localStorage.getItem("BIN_ID")}/latest`, true);
+    req.setRequestHeader("X-Master-Key", localStorage.getItem("MASTER_KEY"));
     req.send();
 }
 
@@ -115,8 +118,16 @@ let updateJSONBin = () => {
         }
     };
 
-    req.open("PUT", "https://api.jsonbin.io/v3/b/68f2259eae596e708f189282", true);
+    req.open("PUT", `https://api.jsonbin.io/v3/b/${localStorage.getItem("BIN_ID")}`, true);
     req.setRequestHeader("Content-Type", "application/json");
-    req.setRequestHeader("X-Master-Key", "");
+    req.setRequestHeader("X-Master-Key", localStorage.getItem("MASTER_KEY"));
     req.send(JSON.stringify(todoList));
+}
+
+let updateAPI = () => {
+    const master_key = document.getElementById("master-key");
+    const bin_id = document.getElementById("bin-id");
+    localStorage.setItem("MASTER_KEY", master_key.value);
+    localStorage.setItem("BIN_ID", bin_id.value);    
+    initList();
 }
