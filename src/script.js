@@ -7,57 +7,53 @@ let dateTo = document.getElementById("dateTo");
 let todoListDiv = document.getElementById("table");
 
 function updateTodoList() {
-  while (todoListDiv.children.length > 1) {
-    todoListDiv.removeChild(todoListDiv.lastChild);
-  }
+    while (todoListDiv.children.length > 1) {
+        todoListDiv.removeChild(todoListDiv.lastChild);
+    }
 
-  const filteredTodoList = todoList.filter((todo) => {
-    const minDate = dateFrom.value || "0001-01-01";
-    const maxDate = dateTo.value || "9999-12-31";
-    const due = todo.dueDate || "0001-01-01";
+    const filteredTodoList = todoList.filter((todo) => {
+        const minDate = dateFrom.value || "0001-01-01";
+        const maxDate = dateTo.value || "9999-12-31";
+        const due = todo.dueDate || "0001-01-01";
 
-    const keyword = filterInput.value.toLowerCase();
-    const matchesText =
-      todo.title.toLowerCase().includes(keyword) ||
-      todo.description.toLowerCase().includes(keyword) ||
-      todo.category.toLowerCase().includes(keyword) ||
-      todo.place.toLowerCase().includes(keyword);
+        const keyword = filterInput.value.toLowerCase();
+        const matchesText = todo.title.toLowerCase().includes(keyword) || todo.description.toLowerCase().includes(keyword) || todo.category.toLowerCase().includes(keyword) || todo.place.toLowerCase().includes(keyword);
 
-    const matchesDate = due >= minDate && due <= maxDate;
-    return matchesText && matchesDate;
-  });
-
-  filteredTodoList.forEach((todo, index) => {
-    const newElement = document.createElement("tr");
-
-    const title = document.createElement("td");
-    title.innerText = todo.title;
-
-    const description = document.createElement("td");
-    description.innerText = todo.description;
-
-    const place = document.createElement("td");
-    place.innerText = todo.place;
-
-    const category = document.createElement("td");
-    category.innerText = todo.category;
-
-    const dueDate = document.createElement("td");
-    dueDate.innerText = dayjs(todo.dueDate).format("DD.MM.YYYY");
-
-    const deleteBtn = document.createElement("td");
-    const newDeleteButton = document.createElement("input");
-    newDeleteButton.type = "button";
-    newDeleteButton.value = "Delete";
-    newDeleteButton.className = "btn btn-danger width-100";
-    newDeleteButton.addEventListener("click", () => {
-      deleteTodo(index);
+        const matchesDate = due >= minDate && due <= maxDate;
+        return matchesText && matchesDate;
     });
-    deleteBtn.appendChild(newDeleteButton);
 
-    newElement.append(title, description, place, category, dueDate, deleteBtn);
-    todoListDiv.appendChild(newElement);
-  });
+    filteredTodoList.forEach((todo, index) => {
+        const newElement = document.createElement("tr");
+
+        const title = document.createElement("td");
+        title.innerText = todo.title;
+
+        const description = document.createElement("td");
+        description.innerText = todo.description;
+
+        const place = document.createElement("td");
+        place.innerText = todo.place;
+
+        const category = document.createElement("td");
+        category.innerText = todo.category;
+
+        const dueDate = document.createElement("td");
+        dueDate.innerText = dayjs(todo.dueDate).format("DD.MM.YYYY");
+
+        const deleteBtn = document.createElement("td");
+        const newDeleteButton = document.createElement("input");
+        newDeleteButton.type = "button";
+        newDeleteButton.value = "Delete";
+        newDeleteButton.className = "btn btn-danger width-100";
+        newDeleteButton.addEventListener("click", () => {
+            deleteTodo(index);
+        });
+        deleteBtn.appendChild(newDeleteButton);
+
+        newElement.append(title, description, place, category, dueDate, deleteBtn);
+        todoListDiv.appendChild(newElement);
+    });
 }
 
 filterInput.addEventListener("input", updateTodoList);
@@ -93,28 +89,26 @@ let deleteTodo = function (index) {
 }
 
 let addTodo = async function () {
-    //get the elements in the form
     let inputTitle = document.getElementById("inputTitle");
     let inputDescription = document.getElementById("inputDescription");
     let inputPlace = document.getElementById("inputPlace");
     let inputDate = document.getElementById("inputDate");
-    //get the values from the form
+
     let newTitle = inputTitle.value;
     let newDescription = inputDescription.value;
     let newPlace = inputPlace.value;
     let newDate = inputDate.value;
-    //create new item
+
     let newTodo = {
         title: newTitle,
         description: newDescription,
         place: newPlace,
-        category: 'pogman',
+        category: "undefined",
         dueDate: newDate
     };
 
     newTodo.category = await getCategoryFromGrok(newTodo);
 
-    //add item to the list
     todoList.push(newTodo);
     console.log(newTodo);
 
@@ -153,11 +147,8 @@ let updateAPI = () => {
 
 let getCategoryFromGrok = async (todoEntry) => {
     const body = {
-        model: "openai/gpt-oss-20b",
-        messages: [
-            {
-                role: "user",
-                content: `
+        model: "openai/gpt-oss-20b", messages: [{
+            role: "user", content: `
                     You are a task classification assistant.
 
                     Your goal is to assign a single category to the provided task based on its context.
@@ -176,24 +167,21 @@ let getCategoryFromGrok = async (todoEntry) => {
                     Output:
                     Return only the category name (university, work, personal, or finance) — no explanation or extra text.
                 `.trim()
-            }
-        ]
+        }]
     }
 
     try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-            method: "POST",
-            headers: {
+            method: "POST", headers: {
                 "Authorization": `Bearer ${localStorage.getItem("GROQ_KEY")}`,
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
+            }, body: JSON.stringify(body)
         });
 
         const data = await res.json();
         return data.choices[0].message.content;
     } catch (err) {
         console.error(err);
-        return null;
+        return "undefined";
     }
 }
